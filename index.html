@@ -79,26 +79,6 @@
       opacity: 0.9;
     }
 
-    .teaser {
-      font-family: 'Playfair Display', serif;
-      font-size: 1rem;
-      font-style: italic;
-      color: var(--text-soft);
-      margin-bottom: 1.25rem;
-      max-width: 320px;
-      min-height: 2.5em;
-    }
-
-    .teaser-label {
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.75rem;
-      font-style: normal;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      opacity: 0.8;
-      margin-bottom: 0.35rem;
-    }
-
     .categories {
       display: flex;
       flex-wrap: wrap;
@@ -151,22 +131,6 @@
     .cta:hover, .cta:active {
       transform: scale(1.02);
       box-shadow: 0 10px 28px var(--shadow);
-    }
-
-    .sound-toggle {
-      margin-top: 1rem;
-      font-size: 0.8rem;
-      color: var(--text-soft);
-    }
-
-    .sound-toggle button {
-      background: none;
-      border: none;
-      color: var(--accent);
-      font-family: inherit;
-      cursor: pointer;
-      text-decoration: underline;
-      text-underline-offset: 2px;
     }
 
     .card-wrap {
@@ -281,15 +245,8 @@
         <h1>Hi, my princess.</h1>
         <p>Whenever you need a little reminder of the good stuff.</p>
       </div>
-      <div class="teaser">
-        <div class="teaser-label" id="teaserLabel">Last time you looked</div>
-        <div id="teaserText"></div>
-      </div>
       <div class="categories" id="categories"></div>
       <button type="button" class="cta" id="needReminder">I need a reminder</button>
-      <div class="sound-toggle">
-        <button type="button" id="soundToggle">🔔 Sound off</button>
-      </div>
     </div>
 
     <div class="card-wrap">
@@ -343,8 +300,6 @@
       { id: "smile", label: "To make me smile" }
     ];
 
-    const STORAGE_KEYS = { lastReminder: "reminder_last", soundOn: "reminder_sound" };
-
     let deck = [];
     let currentCategory = "any";
 
@@ -373,30 +328,6 @@
       return deck.pop() || getListForCategory("any")[0] || "You're loved.";
     }
 
-    function playChime() {
-      try {
-        const audio = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = audio.createOscillator();
-        const gain = audio.createGain();
-        osc.connect(gain);
-        gain.connect(audio.destination);
-        osc.frequency.value = 523.25;
-        osc.type = "sine";
-        gain.gain.setValueAtTime(0.15, audio.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audio.currentTime + 0.2);
-        osc.start(audio.currentTime);
-        osc.stop(audio.currentTime + 0.2);
-      } catch (_) {}
-    }
-
-    function isSoundOn() {
-      return localStorage.getItem(STORAGE_KEYS.soundOn) === "1";
-    }
-
-    function setSoundOn(on) {
-      localStorage.setItem(STORAGE_KEYS.soundOn, on ? "1" : "0");
-    }
-
     // DOM
     const card = document.getElementById('reminderCard');
     const quoteText = document.getElementById('quoteText');
@@ -404,10 +335,7 @@
     const anotherBtn = document.getElementById('anotherBtn');
     const backWrap = document.getElementById('backWrap');
     const backBtn = document.getElementById('backBtn');
-    const teaserText = document.getElementById('teaserText');
-    const teaserLabel = document.getElementById('teaserLabel');
     const categoriesEl = document.getElementById('categories');
-    const soundToggle = document.getElementById('soundToggle');
     const copyBtn = document.getElementById('copyBtn');
     const shareBtn = document.getElementById('shareBtn');
 
@@ -426,30 +354,11 @@
       });
     }
 
-    function updateTeaser() {
-      const last = localStorage.getItem(STORAGE_KEYS.lastReminder);
-      if (last) {
-        teaserLabel.textContent = 'Last time you looked';
-        teaserText.textContent = last;
-      } else {
-        teaserLabel.textContent = '';
-        const list = getListForCategory('any');
-        teaserText.textContent = list[Math.floor(Math.random() * list.length)];
-      }
-    }
-
-    function updateSoundToggle() {
-      soundToggle.textContent = isSoundOn() ? '🔔 Sound on' : '🔔 Sound off';
-    }
-
     function showReminder() {
       const quote = getNextReminder();
       quoteText.textContent = quote;
-      localStorage.setItem(STORAGE_KEYS.lastReminder, quote);
-      if (isSoundOn()) playChime();
       card.classList.add('visible');
       backWrap.style.display = 'block';
-      updateTeaser();
     }
 
     function hideReminder() {
@@ -460,11 +369,6 @@
     needReminder.addEventListener('click', showReminder);
     anotherBtn.addEventListener('click', showReminder);
     backBtn.addEventListener('click', hideReminder);
-
-    soundToggle.addEventListener('click', () => {
-      setSoundOn(!isSoundOn());
-      updateSoundToggle();
-    });
 
     copyBtn.addEventListener('click', () => {
       const q = quoteText.textContent;
@@ -484,8 +388,6 @@
 
     buildDeck();
     renderCategories();
-    updateTeaser();
-    updateSoundToggle();
   </script>
 </body>
 </html>
