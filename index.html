@@ -9,6 +9,7 @@
   <title>When you need a reminder</title>
   <link rel="apple-touch-icon" href="icon.png" />
   <link rel="icon" href="icon.png" type="image/png" />
+  <link rel="manifest" href="manifest.json" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet" />
@@ -21,6 +22,18 @@
       --text: #3d3232;
       --text-soft: #6b5b5b;
       --shadow: rgba(201, 123, 99, 0.15);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1614;
+        --card: #252019;
+        --accent: #d4937a;
+        --accent-soft: #4a3a32;
+        --text: #e8e0da;
+        --text-soft: #a8988f;
+        --shadow: rgba(0, 0, 0, 0.3);
+      }
     }
 
     * {
@@ -50,7 +63,7 @@
     }
 
     .intro {
-      margin-bottom: 2rem;
+      margin-bottom: 1.25rem;
     }
 
     .intro h1 {
@@ -64,6 +77,59 @@
       font-size: 0.95rem;
       color: var(--text-soft);
       opacity: 0.9;
+    }
+
+    .teaser {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--text-soft);
+      margin-bottom: 1.25rem;
+      max-width: 320px;
+      min-height: 2.5em;
+    }
+
+    .teaser-label {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.75rem;
+      font-style: normal;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.8;
+      margin-bottom: 0.35rem;
+    }
+
+    .categories {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .cat-btn {
+      appearance: none;
+      border: 1px solid var(--accent-soft);
+      background: var(--card);
+      color: var(--text-soft);
+      font-family: inherit;
+      font-size: 0.85rem;
+      padding: 0.45rem 0.85rem;
+      border-radius: 1.5rem;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+      -webkit-appearance: none;
+    }
+
+    .cat-btn:hover, .cat-btn:active {
+      background: var(--accent-soft);
+      color: var(--text);
+    }
+
+    .cat-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
     }
 
     .cta {
@@ -85,6 +151,22 @@
     .cta:hover, .cta:active {
       transform: scale(1.02);
       box-shadow: 0 10px 28px var(--shadow);
+    }
+
+    .sound-toggle {
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: var(--text-soft);
+    }
+
+    .sound-toggle button {
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-family: inherit;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
     }
 
     .card-wrap {
@@ -128,8 +210,15 @@
       opacity: 0.8;
     }
 
+    .card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      margin-top: 1rem;
+    }
+
     .another {
-      margin-top: 1.25rem;
       background: transparent;
       color: var(--accent);
       font-size: 0.95rem;
@@ -139,10 +228,33 @@
       font-family: inherit;
       text-decoration: underline;
       text-underline-offset: 3px;
+      padding: 0;
     }
 
     .another:hover {
       opacity: 0.85;
+    }
+
+    .copy-share {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .copy-share button {
+      background: var(--bg);
+      border: 1px solid var(--accent-soft);
+      color: var(--text-soft);
+      font-family: inherit;
+      font-size: 0.85rem;
+      padding: 0.4rem 0.75rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .copy-share button:hover {
+      background: var(--accent-soft);
+      color: var(--text);
     }
 
     .home-link {
@@ -169,14 +281,28 @@
         <h1>Hi, my princess.</h1>
         <p>Whenever you need a little reminder of the good stuff.</p>
       </div>
+      <div class="teaser">
+        <div class="teaser-label" id="teaserLabel">Last time you looked</div>
+        <div id="teaserText"></div>
+      </div>
+      <div class="categories" id="categories"></div>
       <button type="button" class="cta" id="needReminder">I need a reminder</button>
+      <div class="sound-toggle">
+        <button type="button" id="soundToggle">🔔 Sound off</button>
+      </div>
     </div>
 
     <div class="card-wrap">
       <div class="reminder-card" id="reminderCard" aria-live="polite">
         <p class="quote" id="quoteText"></p>
         <p class="hint">Something I wanted you to remember.</p>
-        <button type="button" class="another" id="anotherBtn">Another one</button>
+        <div class="card-actions">
+          <button type="button" class="another" id="anotherBtn">Another one</button>
+          <div class="copy-share">
+            <button type="button" id="copyBtn">Copy</button>
+            <button type="button" id="shareBtn">Share</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -186,53 +312,144 @@
   </div>
 
   <script>
-    // Edit these! Add things you've said, inside jokes, or anything that reminds her she's loved.
+    // Reminders: { text, tags }. Tags: "any" (always), "sweet", "comfort", "smile". Add your own and tag them.
     const reminders = [
-      "You're the best thing that's happened to me.",
-      "You are the wind to my sails.",
-      "Take a second to yourself.",
-      "You have accomplished so much by yourself, don't let anyone take that away from you.",
-      "Think about Isabella's in Menorca, and look forward to that moment each summer.",
-      "One day we will look back at today, and smile at how much we've grown since.",
-      "Sometimes plans don't go as planned, it's OK! Just breathe, adapt, and remember to enjoy the moment.",
-   
-      "I'm so proud of you, always.",
-      "You're stronger than you think.",
-      "I love you exactly as you are.",
-      "You make my days brighter.",
-      "I'm here for you, no matter what.",
-      "You deserve all the good things.",
-      "I believe in you.",
-      "I'm lucky to have you in my life.",
-      "You're beautiful inside and out.",
-      "Take your time. Everyone has their own path.",
-      "You're doing great, even when it doesn't feel like it.",
-      "I chose you, and I'd choose you again.",
-      "You matter so much to me."
+      { text: "You're the best thing that's happened to me.", tags: ["any", "sweet"] },
+      { text: "You are the wind to my sails.", tags: ["any", "sweet"] },
+      { text: "Take a second to yourself.", tags: ["any", "comfort"] },
+      { text: "You have accomplished so much by yourself, don't let anyone take that away from you.", tags: ["any", "comfort"] },
+      { text: "Think about Isabella's in Menorca, and look forward to that moment each summer.", tags: ["any", "smile"] },
+      { text: "One day we will look back at today, and smile at how much we've grown since.", tags: ["any", "comfort"] },
+      { text: "Sometimes plans don't go as planned, it's OK! Just breathe, adapt, and remember to enjoy the moment.", tags: ["any", "comfort"] },
+      { text: "I'm so proud of you, always.", tags: ["any", "sweet"] },
+      { text: "You're stronger than you think.", tags: ["any", "comfort"] },
+      { text: "I love you exactly as you are.", tags: ["any", "sweet"] },
+      { text: "You make my days brighter.", tags: ["any", "sweet"] },
+      { text: "I'm here for you, no matter what.", tags: ["any", "comfort"] },
+      { text: "You deserve all the good things.", tags: ["any", "sweet"] },
+      { text: "I believe in you.", tags: ["any", "comfort"] },
+      { text: "I'm lucky to have you in my life.", tags: ["any", "sweet"] },
+      { text: "You're beautiful inside and out.", tags: ["any", "sweet"] },
+      { text: "Take your time. Everyone has their own path.", tags: ["any", "comfort"] },
+      { text: "You're doing great, even when it doesn't feel like it.", tags: ["any", "comfort"] },
+      { text: "I chose you, and I'd choose you again.", tags: ["any", "sweet"] },
+      { text: "You matter so much to me.", tags: ["any", "sweet"] }
     ];
 
+    const CATEGORIES = [
+      { id: "any", label: "Any" },
+      { id: "sweet", label: "Something sweet" },
+      { id: "comfort", label: "Comfort" },
+      { id: "smile", label: "To make me smile" }
+    ];
+
+    const STORAGE_KEYS = { lastReminder: "reminder_last", soundOn: "reminder_sound" };
+
+    let deck = [];
+    let currentCategory = "any";
+
+    function getListForCategory(cat) {
+      if (cat === "any") return reminders.map(r => r.text);
+      return reminders.filter(r => r.tags && r.tags.includes(cat)).map(r => r.text);
+    }
+
+    function shuffle(arr) {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function buildDeck() {
+      let list = getListForCategory(currentCategory);
+      if (list.length === 0) list = getListForCategory("any");
+      deck = shuffle(list);
+    }
+
+    function getNextReminder() {
+      if (deck.length === 0) buildDeck();
+      return deck.pop() || getListForCategory("any")[0] || "You're loved.";
+    }
+
+    function playChime() {
+      try {
+        const audio = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audio.createOscillator();
+        const gain = audio.createGain();
+        osc.connect(gain);
+        gain.connect(audio.destination);
+        osc.frequency.value = 523.25;
+        osc.type = "sine";
+        gain.gain.setValueAtTime(0.15, audio.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audio.currentTime + 0.2);
+        osc.start(audio.currentTime);
+        osc.stop(audio.currentTime + 0.2);
+      } catch (_) {}
+    }
+
+    function isSoundOn() {
+      return localStorage.getItem(STORAGE_KEYS.soundOn) === "1";
+    }
+
+    function setSoundOn(on) {
+      localStorage.setItem(STORAGE_KEYS.soundOn, on ? "1" : "0");
+    }
+
+    // DOM
     const card = document.getElementById('reminderCard');
     const quoteText = document.getElementById('quoteText');
     const needReminder = document.getElementById('needReminder');
     const anotherBtn = document.getElementById('anotherBtn');
     const backWrap = document.getElementById('backWrap');
     const backBtn = document.getElementById('backBtn');
+    const teaserText = document.getElementById('teaserText');
+    const teaserLabel = document.getElementById('teaserLabel');
+    const categoriesEl = document.getElementById('categories');
+    const soundToggle = document.getElementById('soundToggle');
+    const copyBtn = document.getElementById('copyBtn');
+    const shareBtn = document.getElementById('shareBtn');
 
-    let lastIndex = -1;
+    function renderCategories() {
+      categoriesEl.innerHTML = CATEGORIES.map(c => {
+        const active = currentCategory === c.id ? ' active' : '';
+        return `<button type="button" class="cat-btn${active}" data-cat="${c.id}">${c.label}</button>`;
+      }).join('');
+      categoriesEl.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentCategory = btn.dataset.cat;
+          categoriesEl.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          buildDeck();
+        });
+      });
+    }
 
-    function pickRandom() {
-      let i;
-      do {
-        i = Math.floor(Math.random() * reminders.length);
-      } while (reminders.length > 1 && i === lastIndex);
-      lastIndex = i;
-      return reminders[i];
+    function updateTeaser() {
+      const last = localStorage.getItem(STORAGE_KEYS.lastReminder);
+      if (last) {
+        teaserLabel.textContent = 'Last time you looked';
+        teaserText.textContent = last;
+      } else {
+        teaserLabel.textContent = '';
+        const list = getListForCategory('any');
+        teaserText.textContent = list[Math.floor(Math.random() * list.length)];
+      }
+    }
+
+    function updateSoundToggle() {
+      soundToggle.textContent = isSoundOn() ? '🔔 Sound on' : '🔔 Sound off';
     }
 
     function showReminder() {
-      quoteText.textContent = pickRandom();
+      const quote = getNextReminder();
+      quoteText.textContent = quote;
+      localStorage.setItem(STORAGE_KEYS.lastReminder, quote);
+      if (isSoundOn()) playChime();
       card.classList.add('visible');
       backWrap.style.display = 'block';
+      updateTeaser();
     }
 
     function hideReminder() {
@@ -243,6 +460,32 @@
     needReminder.addEventListener('click', showReminder);
     anotherBtn.addEventListener('click', showReminder);
     backBtn.addEventListener('click', hideReminder);
+
+    soundToggle.addEventListener('click', () => {
+      setSoundOn(!isSoundOn());
+      updateSoundToggle();
+    });
+
+    copyBtn.addEventListener('click', () => {
+      const q = quoteText.textContent;
+      if (q && navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(q);
+      }
+    });
+
+    shareBtn.addEventListener('click', () => {
+      const q = quoteText.textContent;
+      if (q && navigator.share) {
+        navigator.share({ title: 'A reminder', text: q });
+      } else if (q && navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(q);
+      }
+    });
+
+    buildDeck();
+    renderCategories();
+    updateTeaser();
+    updateSoundToggle();
   </script>
 </body>
 </html>
